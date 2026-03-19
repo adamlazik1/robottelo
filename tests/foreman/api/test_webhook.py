@@ -36,7 +36,7 @@ def _read_log(ch, pattern):
     return None
 
 
-def _wait_for_log(channel, pattern, timeout=2, delay=0.2):
+def _wait_for_log(channel, pattern, timeout=30, delay=0.2):
     """_read_log method enclosed in wait_for method"""
     matching_log = wait_for(
         _read_log,

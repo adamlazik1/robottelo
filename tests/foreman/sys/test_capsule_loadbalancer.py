@@ -99,10 +99,8 @@ def setup_capsules(
         result = capsule.install(install_cmd)
         assert result.status == 0
         capsule._satellite = module_target_sat
-        for i in module_target_sat.cli.Capsule.list():
-            if i['name'] == capsule.hostname:
-                capsule_id = i['id']
-                break
+        capsule_info = module_target_sat.cli.Capsule.info({'name': capsule.hostname})
+        capsule_id = capsule_info['id']
 
         module_target_sat.cli.Capsule.content_add_lifecycle_environment(
             {

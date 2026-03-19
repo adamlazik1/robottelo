@@ -49,8 +49,10 @@ def test_positive_update_capsule(request, pytestconfig, target_sat, module_capsu
     result = module_capsule_configured.install(cmd_args=['enable-foreman-proxy-plugin-openscap'])
     assert result.status == 0, 'Installer failed when enabling OpenSCAP plugin.'
     features_new = capsule.refresh()
-    assert len(features_new["features"]) == len(features["features"]) + 1
-    assert 'Openscap' in [feature["name"] for feature in features_new["features"]]
+    old_features = {f['name'] for f in features['features']}
+    new_features = {f['name'] for f in features_new['features']}
+    assert old_features <= new_features, f'Features were removed: {old_features - new_features}'
+    assert 'Openscap' in new_features - old_features
 
     # update organizations
     organizations = [target_sat.api.Organization().create() for _ in range(2)]

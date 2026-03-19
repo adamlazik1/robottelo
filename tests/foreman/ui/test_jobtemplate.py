@@ -53,8 +53,8 @@ def test_positive_end_to_end(session, module_org, module_location, target_sat):
             'name': template_user_input_name,
             'required': True,
             'input_type': 'User input',
-            'input_content.options': gen_string('alpha'),
             'input_content.advanced': True,
+            'input_content.options': gen_string('alpha'),
             'input_content.description': gen_string('alpha'),
         },
     ]
@@ -133,12 +133,12 @@ def test_positive_end_to_end(session, module_org, module_location, target_sat):
         assert template['inputs'][2]['required'] == template_inputs[2]['required']
         assert template['inputs'][2]['input_type'] == template_inputs[2]['input_type']
         assert (
-            template['inputs'][2]['input_content']['options']
-            == template_inputs[2]['input_content.options']
-        )
-        assert (
             template['inputs'][2]['input_content']['advanced']
             == template_inputs[2]['input_content.advanced']
+        )
+        assert (
+            template['inputs'][2]['input_content']['options']
+            == template_inputs[2]['input_content.options']
         )
         assert (
             template['inputs'][2]['input_content']['description']

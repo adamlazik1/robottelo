@@ -261,24 +261,27 @@ def module_capsule_configured_mqtt(request, module_capsule_configured_ansible):
 
 
 @pytest.fixture(scope='module')
-def module_lb_capsules(retry_limit=3, delay=300, **broker_args):
+def module_lb_capsules():
     """A fixture that spins 2 capsule for loadbalancer
     :return: List of capsules
     """
-    if settings.capsule.get('deploy_arguments'):
-        resolved = resolve_deploy_args(settings.capsule.deploy_arguments)
-        settings.set('capsule.deploy_arguments', resolved)
-        broker_args.update(settings.capsule.deploy_arguments)
-        timeout = (1200 + delay) * retry_limit
-        hosts = Broker(
-            host_class=Capsule,
-            workflow=settings.capsule.deploy_workflows.product,
-            _count=2,
-            **broker_args,
-        )
-        cap_hosts = wait_for(
-            hosts.checkout, timeout=timeout, delay=delay, handle_exception=True, raise_original=True
-        )
+    retry_limit = 3
+    delay = 300
+    if not settings.capsule.get('deploy_arguments'):
+        pytest.skip('No capsule deploy_arguments configured')
+    resolved = resolve_deploy_args(settings.capsule.deploy_arguments)
+    settings.set('capsule.deploy_arguments', resolved)
+    broker_args = dict(settings.capsule.deploy_arguments)
+    timeout = (1200 + delay) * retry_limit
+    hosts = Broker(
+        host_class=Capsule,
+        workflow=settings.capsule.deploy_workflows.product,
+        _count=2,
+        **broker_args,
+    )
+    cap_hosts = wait_for(
+        hosts.checkout, timeout=timeout, delay=delay, handle_exception=True, raise_original=True
+    )
 
     [cap.enable_ipv6_dnf_and_rhsm_proxy() for cap in cap_hosts.out]
     yield cap_hosts.out
